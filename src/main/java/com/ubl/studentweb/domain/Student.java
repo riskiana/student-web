@@ -3,12 +3,12 @@ package com.ubl.studentweb.domain;
 import java.time.LocalDate;
 
 public class Student {
-
+     
+    private String nim;
     private String fullName;
     private String address;
     private LocalDate dateOfBirth;
-    private String nim;
-
+   
     public Student() {
     }
 
