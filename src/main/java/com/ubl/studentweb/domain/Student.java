@@ -1,13 +1,18 @@
 package com.ubl.studentweb.domain;
 
 import java.time.LocalDate;
+import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 public class Student {
 
+    private String nim;
     private String fullName;
     private String address;
-    private LocalDate dateOfBirth;
-    private String nim;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date dateOfBirth;
+    
 
     public Student() {
     }
@@ -15,23 +20,19 @@ public class Student {
     public String getFullName() {
         return fullName;
     }
+
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
+
     public String getAddress() {
         return address;
     }
+
     public void setAddress(String address) {
         this.address = address;
     }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
 
     public String getNim() {
         return nim;
@@ -40,5 +41,13 @@ public class Student {
     public void setNim(String nim) {
         this.nim = nim;
     }
-   
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
 }

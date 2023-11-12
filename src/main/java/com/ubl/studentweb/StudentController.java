@@ -1,37 +1,48 @@
 package com.ubl.studentweb;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ubl.studentweb.domain.Student;
 
-@RestController
+@Controller
 public class StudentController {
 
     public static Map<String, Student> studentMap = new HashMap<>();
 
     @GetMapping("/students")
-    public List<Student> getStudents() {
-        return studentMap.values().stream().toList();
+    public String getStudents(Model model) {
+        model.addAttribute("students", fetchStudents());
+        return "index";
+    }
+
+    @GetMapping("/signup")
+    public String showSignUpForm(Student student) {
+        return "add-student";
     }
 
     @PostMapping("/students")
-    public ResponseEntity<String> addStudent(@RequestBody Student student) {
-        studentMap.put(student.getNim(), student);
-        Student savedStudent = studentMap.get(student.getNim());
-        return new ResponseEntity<>("Student with NIM: " + savedStudent.getNim() +
-                " has been created", HttpStatus.OK);
+    public String addStudent(Student student, Model model) {
+        String nim = student.getNim();
+        boolean exists = studentMap.values().stream()
+                .anyMatch(data -> nim.equals(data.getNim()));
+
+        if (exists) {
+            throw new IllegalArgumentException("student with nim:" + nim + "is already exist");
+        }
+        studentMap.put(nim, student);
+        model.addAttribute("students", fetchStudents());
+        return "index";
     }
 
     @GetMapping(value = "/students/{nim}")
@@ -40,22 +51,37 @@ public class StudentController {
         return new ResponseEntity<>(student, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/students/{nim}")
-    public ResponseEntity<String> updateStudent(@PathVariable("nim") String nim, 
-    @RequestBody Student student) {
+    private static List<Student> fetchStudents() {
+        return studentMap.values().stream().toList();
+    }
+
+    @PostMapping(value = "/students/{nim}")
+    public String updateStudent(@PathVariable("nim") String nim,
+            Student student,
+            BindingResult result, Model model) {
         final Student studentToBeUpdated = studentMap.get(student.getNim());
         studentToBeUpdated.setAddress(student.getAddress());
         studentToBeUpdated.setDateOfBirth(student.getDateOfBirth());
         studentToBeUpdated.setFullName(student.getFullName());
-
         studentMap.put(student.getNim(), studentToBeUpdated);
-        return new ResponseEntity<>("Student with NIM: " + studentToBeUpdated.getNim() +
-                " has been updated", HttpStatus.OK);
+
+        model.addAttribute("students", fetchStudents());
+        return "redirect:/students";
     }
 
-    @DeleteMapping(value = "/students/{nim}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable("nim") String nim) {
+    @GetMapping("/edit/{nim}")
+    public String showUpdateForm(@PathVariable("nim") String nim, Model model) {
+        final Student studentToBeUpdated = studentMap.get(nim);
+        if (studentToBeUpdated == null) {
+            throw new IllegalArgumentException("student with nim:" + nim + "is not found");
+        }
+        model.addAttribute("student", studentToBeUpdated);
+        return "update-student";
+    }
+
+    @GetMapping(value = "/students/{nim}/delete")
+    public String deleteStudent(@PathVariable("nim") String nim) {
         studentMap.remove(nim);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return "redirect:/students";
     }
 }

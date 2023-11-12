@@ -1,0 +1,28 @@
+<div th:switch="${students}">
+        <div th:case="*">
+            <h2>Students of Budi Luhur University</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>NIM</th>
+                        <th>Full name</th>
+                        <th>Date of birth</th>
+                        <th>Address</th>
+                        <th>edit</th>
+                        <th>delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student : ${students}">
+                    <td th:text="${student.nim}"></td>
+                    <td th:text="${student.fullName}"></td>
+                    <td th:text="${#dates.format(student.dateOfBirth, 'dd-MMM-yyyy')}"></td>
+                    <td th:text="${student.address}"></td>
+                    <td><a th:href="@{/edit/{nim}(nim=${student.nim})}">Edit</a></td>
+                    <td><a th:href="@{/students/{nim}/delete (nim=${student.nim})}">Delete</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>      
+    <p><a href="/signup">Add a new student</a></p>
+</div>
