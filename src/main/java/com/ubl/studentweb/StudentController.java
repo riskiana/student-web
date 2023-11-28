@@ -1,5 +1,7 @@
 package com.ubl.studentweb;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ubl.studentweb.domain.Student;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class StudentController {
 
@@ -27,11 +31,34 @@ public class StudentController {
     }
 
     @PostMapping("/students")
-    public ResponseEntity<String> addStudent(@RequestBody Student student) {
+    public ResponseEntity<String> addStudent(@Valid @RequestBody Student student) {
+        validateDateOfBirth(student);
+        validateExistEmail(student);
+
         studentMap.put(student.getNim(), student);
         Student savedStudent = studentMap.get(student.getNim());
+
         return new ResponseEntity<>("Student with NIM: " + savedStudent.getNim() +
                 " has been created", HttpStatus.OK);
+    }
+
+    private void validateDateOfBirth(Student student) {
+        LocalDate dateOfBirth = student.getDateOfBirth();
+        LocalDate currentTime = LocalDate.now();
+        int age = Period.between(dateOfBirth, currentTime).getYears();
+        if (age < 12) {
+            throw new IllegalArgumentException("minimum age is 12. your age: " + age);
+        }
+
+    }
+
+    private void validateExistEmail(Student student) {
+        final var studentList = getStudents();
+        final boolean exists = studentList.stream()
+                .anyMatch(data -> data.getEmail().equalsIgnoreCase(student.getEmail()));
+        if (exists) {
+            throw new IllegalArgumentException("email is already exists: " + student.getEmail());
+        }
     }
 
     @GetMapping(value = "/students/{nim}")
@@ -41,8 +68,8 @@ public class StudentController {
     }
 
     @PutMapping(value = "/students/{nim}")
-    public ResponseEntity<String> updateStudent(@PathVariable("nim") String nim, 
-    @RequestBody Student student) {
+    public ResponseEntity<String> updateStudent(@PathVariable("nim") String nim,
+            @RequestBody Student student) {
         final Student studentToBeUpdated = studentMap.get(student.getNim());
         studentToBeUpdated.setAddress(student.getAddress());
         studentToBeUpdated.setDateOfBirth(student.getDateOfBirth());
