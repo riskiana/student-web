@@ -1,6 +1,8 @@
 package com.ubl.studentweb;
 
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,12 +12,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import com.ubl.studentweb.domain.Student;
 
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
+@Slf4j
 public class StudentController {
 
     public static Map<String, Student> studentMap = new HashMap<>();
@@ -32,7 +39,22 @@ public class StudentController {
     }
 
     @PostMapping("/students")
-    public String addStudent(Student student, Model model) {
+    public String addStudent(@Valid Student student, BindingResult bindingResult, Model model) {
+
+        String errorDateOfBirth = validateDateOfBirth(student);
+
+        log.info("errordateOfBirth {}", errorDateOfBirth);
+        if (errorDateOfBirth != null) {
+            ObjectError error = new ObjectError("globalError", errorDateOfBirth);
+            bindingResult.addError(error);
+        }
+
+        log.info("bindingResult {}", bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            return "add-student";
+        }
+
         String nim = student.getNim();
         boolean exists = studentMap.values().stream()
                 .anyMatch(data -> nim.equals(data.getNim()));
@@ -43,6 +65,26 @@ public class StudentController {
         studentMap.put(nim, student);
         model.addAttribute("students", fetchStudents());
         return "index";
+    }
+
+    private String validateDateOfBirth(Student student) {
+        String errString = null;
+        if (student.getDateOfBirth() != null) {
+            log.info("validate date of birth");
+            LocalDate dateOfBirth = convertToLocalDateViaSqlDate(student.getDateOfBirth());
+            LocalDate currentTime = LocalDate.now();
+            int age = Period.between(dateOfBirth, currentTime).getYears();
+
+            if (age < 12) {
+                errString = "minimum age is 12. your age: " + age;
+            }
+        }
+
+        return errString;
+    }
+
+    public LocalDate convertToLocalDateViaSqlDate(Date dateToConvert) {
+        return new java.sql.Date(dateToConvert.getTime()).toLocalDate();
     }
 
     @GetMapping(value = "/students/{nim}")

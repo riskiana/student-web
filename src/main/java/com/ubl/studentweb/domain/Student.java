@@ -5,12 +5,21 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class Student {
 
     private String nim;
+
+    @NotBlank(message = "full name is required")
+    @Size(min = 3, max = 50)
     private String fullName;
+
     private String address;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "Date of Birth is required")
     private Date dateOfBirth;
     
 

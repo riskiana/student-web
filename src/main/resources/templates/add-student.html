@@ -1,3 +1,8 @@
+<head>
+    <meta charset="UTF-8">
+    <title>Student Web</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
+</head>
 <form action="#" th:action="@{/students}" th:object="${student}" method="post">
     <table>
         <tr>
@@ -7,11 +12,13 @@
         <tr>
             <td> <label for="fullName">Full name</label></td>
             <td> <input type="text" th:field="*{fullName}" id="fullName" placeholder="Full name"></td>
+            <td th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="error"></td>
 
         </tr>
         <tr>
             <td> <label for="dateOfBirth">Date of birth</label></td>
             <td> <input type="date" th:field="*{dateOfBirth}" id="dateOfBirth" placeholder="Date of birth"></td>
+            <td th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}" class="error"></td>
 
         </tr>
         <tr>
@@ -22,6 +29,12 @@
         <tr>
             <td> <input type="submit" value="Add Student"></td>
 
+        </tr>
+        <tr>
+            <div th:if="${#fields.hasErrors('global')}">
+                <h3>errors:</h3>
+                <p th:each="err : ${#fields.errors('global')}" th:text="${err}" class="error" />
+            </div>
         </tr>
 
     </table>
