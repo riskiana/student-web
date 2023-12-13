@@ -40,7 +40,7 @@ public class StudentController {
 
     @PostMapping("/students")
     public String addStudent(@Valid Student student, BindingResult bindingResult, Model model) {
-
+        log.debug("nim {}, fullname {}", student.getNim(), student.getFullName());
         String errorDateOfBirth = validateDateOfBirth(student);
 
         log.info("errordateOfBirth {}", errorDateOfBirth);
