@@ -1,6 +1,5 @@
 package com.ubl.studentweb.domain;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -8,7 +7,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.experimental.Accessors;
 
+@Accessors(chain = true)
 public class Student {
 
     private String nim;
