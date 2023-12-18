@@ -24,13 +24,14 @@ public class StudentServiceImpl implements StudentService {
 
     }
 
-    private Student map(StudentEntity entity){
-        return new Student()
-        .setNim(entity.getNim())
-        .setFullName(entity.getFullName())
-        .setAddress(entity.getAddress())
-        .setDateOfBirth(entity.getDateOfBirth());
-      
+    private Student map(StudentEntity entity) {
+        final Student student = new Student();
+        student.setNim(entity.getNim());
+        student.setFullName(entity.getFullName());
+        student.setAddress(entity.getAddress());
+        student.setDateOfBirth(entity.getDateOfBirth());
+        return student;
+
     }
 
 }
