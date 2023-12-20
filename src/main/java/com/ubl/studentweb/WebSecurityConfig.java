@@ -39,8 +39,8 @@ public class WebSecurityConfig {
 	public UserDetailsService userDetailsService() {
 		UserDetails user =
 			 User.builder()
-				.username("student1")
-				.password(this.passwordEncoder().encode("password1"))
+				.username("user")
+				.password(this.passwordEncoder().encode("password"))
 				.roles("USER")
 				.build();
 				
