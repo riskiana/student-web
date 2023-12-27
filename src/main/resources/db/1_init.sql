@@ -3,5 +3,7 @@ CREATE TABLE student (
     nim VARCHAR(10) UNIQUE,
     full_name VARCHAR(50),
     address TEXT,
-    date_of_birth DATE
+    date_of_birth DATE,
+    password TEXT not null,
+    role TEXT not null
     );

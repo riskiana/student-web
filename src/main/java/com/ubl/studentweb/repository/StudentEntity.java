@@ -34,4 +34,10 @@ public class StudentEntity {
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
+    @Column(name="password")
+    private String password; 
+
+     @Column(name="role")
+    private String role; 
+
 }

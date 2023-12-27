@@ -5,11 +5,18 @@ import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
+@NoArgsConstructor
+@Getter
+@Setter
 public class Student {
 
     private String nim;
@@ -20,44 +27,11 @@ public class Student {
 
     private String address;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+
     @NotNull(message = "Date of Birth is required")
     private Date dateOfBirth;
-    
 
-    public Student() {
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-
-    public String getNim() {
-        return nim;
-    }
-
-    public void setNim(String nim) {
-        this.nim = nim;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
+    @NotEmpty(message = "Password should not be empty")
+    private String password;
 
 }

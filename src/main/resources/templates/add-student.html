@@ -27,6 +27,20 @@
 
         </tr>
         <tr>
+            <td><label class="form-label">Password</label></td>
+            <td><input class="form-control"
+                id="password"
+                name="password"
+                placeholder="Enter password"
+                th:field="*{password}"
+                type="password"
+         />
+         <p th:errors="*{password}" class="error"
+            th:if="${#fields.hasErrors('password')}">
+         </p></td>
+        </tr>
+
+        <tr>
             <td> <input type="submit" value="Add Student"></td>
 
         </tr>
