@@ -51,7 +51,7 @@ public class StudentController {
     @PostMapping("/students")
     public String addStudent(@Valid Student student, BindingResult bindingResult, Model model) {
         log.debug("nim {}, fullname {}", student.getNim(), student.getFullName());
-        String errorDateOfBirth = validateDateOfBirth(student);
+        String errorDateOfBirth = validateDateOfBirth(convertToLocalDateViaSqlDate(student.getDateOfBirth()));
 
         log.info("errordateOfBirth {}", errorDateOfBirth);
         if (errorDateOfBirth != null) {
@@ -79,16 +79,15 @@ public class StudentController {
         return "index";
     }
 
-    private String validateDateOfBirth(Student student) {
+    public String validateDateOfBirth(LocalDate dateOfBirth) {
         String errString = null;
-        if (student.getDateOfBirth() != null) {
+        if (dateOfBirth != null) {
             log.info("validate date of birth");
-            LocalDate dateOfBirth = convertToLocalDateViaSqlDate(student.getDateOfBirth());
             LocalDate currentTime = LocalDate.now();
             int age = Period.between(dateOfBirth, currentTime).getYears();
 
             if (age < 12) {
-                errString = "minimum age is 12. your age: " + age;
+                errString = "minimum age is 16";
             }
         }
 
